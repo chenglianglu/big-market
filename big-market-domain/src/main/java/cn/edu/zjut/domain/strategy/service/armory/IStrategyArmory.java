@@ -7,8 +7,9 @@ package cn.edu.zjut.domain.strategy.service.armory;
  * @date: 2024/8/4 15:04
  */
 public interface IStrategyArmory {
-    void assembleLotteryStrategy(Long strategyId);
 
-    Integer getRandomAwardId(Long strategyId);
+    boolean assembleLotteryStrategy(Long strategyId);
+
+
 
 }

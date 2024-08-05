@@ -1,6 +1,8 @@
 package cn.edu.zjut.domain.strategy.repository;
 
 import cn.edu.zjut.domain.strategy.model.StrategyAwardEntity;
+import cn.edu.zjut.domain.strategy.model.StrategyEntity;
+import cn.edu.zjut.domain.strategy.model.StrategyRuleEntity;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,9 +17,15 @@ import java.util.List;
 public interface IStrategyRepository {
     List<StrategyAwardEntity> queryStrategyAwardList(Long strategyId);
 
-    void saveStrategyAwardSearchRateTables(Long strategyId, int rateRange, HashMap<Integer, Integer> shufflestrategyAwardSearchRateTables);
+    void saveStrategyAwardSearchRateTables(String key, int rateRange, HashMap<Integer, Integer> shufflestrategyAwardSearchRateTables);
 
     int getRateRange(Long strategyId);
 
-    Integer getStrategyAwardAssemble(Long strategyId, int rateKey);
+    int getRateRange(String key);
+
+    Integer getStrategyAwardAssemble(String key, int rateKey);
+
+    StrategyEntity queryStrategyEntityByStrategyId(Long strategyId);
+
+    StrategyRuleEntity queryStrategyRule(Long strategyId, String ruleModel);
 }

@@ -17,4 +17,10 @@
         LIMIT 10
     </select>
 
+    <select id="queryStrategyByStrategyId" parameterType="java.lang.Long" resultMap="CaseMap">
+        SELECT strategy_id, strategy_desc, rule_models
+        FROM strategy
+        WHERE strategy_id = #{strategyId}
+    </select>
+
 </mapper>

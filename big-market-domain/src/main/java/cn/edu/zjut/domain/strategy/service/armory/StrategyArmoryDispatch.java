@@ -1,10 +1,9 @@
 package cn.edu.zjut.domain.strategy.service.armory;
 
-import cn.edu.zjut.domain.strategy.model.StrategyAwardEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyRuleEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
-import cn.edu.zjut.types.common.Constants;
 import cn.edu.zjut.types.enums.ResponseCode;
 import cn.edu.zjut.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;

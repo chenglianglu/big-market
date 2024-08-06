@@ -1,10 +1,9 @@
 package cn.edu.zjut.domain.strategy.repository;
 
-import cn.edu.zjut.domain.strategy.model.StrategyAwardEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyRuleEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,4 +27,6 @@ public interface IStrategyRepository {
     StrategyEntity queryStrategyEntityByStrategyId(Long strategyId);
 
     StrategyRuleEntity queryStrategyRule(Long strategyId, String ruleModel);
+
+    String queryStrategyRuleValue(Long strategyId, Integer awardId, String ruleModel);
 }

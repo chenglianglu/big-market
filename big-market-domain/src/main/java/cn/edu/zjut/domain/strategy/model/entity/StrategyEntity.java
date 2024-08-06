@@ -1,4 +1,4 @@
-package cn.edu.zjut.domain.strategy.model;
+package cn.edu.zjut.domain.strategy.model.entity;
 
 import cn.edu.zjut.types.common.Constants;
 import lombok.AllArgsConstructor;

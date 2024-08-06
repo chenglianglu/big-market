@@ -1,8 +1,8 @@
 package cn.edu.zjut.infrastructure.persistent.repository;
 
-import cn.edu.zjut.domain.strategy.model.StrategyAwardEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyEntity;
-import cn.edu.zjut.domain.strategy.model.StrategyRuleEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
+import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
 import cn.edu.zjut.infrastructure.persistent.dao.IStrategyAwardDao;
 import cn.edu.zjut.infrastructure.persistent.dao.IStrategyDao;
@@ -12,11 +12,11 @@ import cn.edu.zjut.infrastructure.persistent.po.StrategyPO;
 import cn.edu.zjut.infrastructure.persistent.po.StrategyRulePO;
 import cn.edu.zjut.infrastructure.persistent.redis.RedissonService;
 import cn.edu.zjut.types.common.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -25,6 +25,7 @@ import java.util.*;
  * @email: clianglu@zjut.edu.cn
  * @date: 2024/8/4 15:09
  */
+@Slf4j
 @Repository
 public class StrategyRepository implements IStrategyRepository {
     @Resource
@@ -51,7 +52,7 @@ public class StrategyRepository implements IStrategyRepository {
                         .strategyId(strategyAward.getStrategyId())
                         .awardId(strategyAward.getAwardId())
                         .awardCount(strategyAward.getAwardCount())
-                        .awardCount_surplus(strategyAward.getAwardCount_surplus())
+                        .awardCountSurplus(strategyAward.getAwardCount_surplus())
                         .awardRate(strategyAward.getAwardRate())
                         .build();
             strategyAwardEntities.add(strategyAwardEntity);
@@ -116,5 +117,14 @@ public class StrategyRepository implements IStrategyRepository {
                 .ruleValue(strategyRuleRes.getRuleValue())
                 .ruleDesc(strategyRuleRes.getRuleDesc())
                 .build();
+    }
+
+    @Override
+    public String queryStrategyRuleValue(Long strategyId, Integer awardId, String ruleModel) {
+        StrategyRulePO strategyRule = new StrategyRulePO();
+        strategyRule.setStrategyId(strategyId);
+        strategyRule.setAwardId(awardId);
+        strategyRule.setRuleModel(ruleModel);
+        return strategyRuleDao.queryStrategyRuleValue(strategyRule);
     }
 }

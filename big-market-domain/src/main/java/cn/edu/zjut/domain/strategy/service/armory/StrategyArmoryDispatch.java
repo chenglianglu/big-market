@@ -35,7 +35,7 @@ public class StrategyArmoryDispatch implements IStrategyArmory, IStrategyDispatc
         assembleLotteryStrategy(String.valueOf(strategyId), strategyAwardEntities);
 
         // 2.权重规则配置 - 适用于rule_weight 权重规则配置
-        StrategyEntity strategyEntity =  strategyRepository.queryStrategyEntityByStrategyId(strategyId);
+        StrategyEntity strategyEntity = strategyRepository.queryStrategyEntityByStrategyId(strategyId);
         String ruleWeight = strategyEntity.getRuleWeight();
         if (null == ruleWeight) {
             return true;

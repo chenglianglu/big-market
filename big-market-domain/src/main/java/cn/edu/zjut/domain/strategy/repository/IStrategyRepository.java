@@ -3,6 +3,7 @@ package cn.edu.zjut.domain.strategy.repository;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
+import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardRuleModelVO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,4 +30,6 @@ public interface IStrategyRepository {
     StrategyRuleEntity queryStrategyRule(Long strategyId, String ruleModel);
 
     String queryStrategyRuleValue(Long strategyId, Integer awardId, String ruleModel);
+
+    StrategyAwardRuleModelVO queryStrategyAwardRuleModel(Long strategyId, Integer awardId);
 }

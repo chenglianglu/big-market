@@ -1,4 +1,4 @@
-package cn.edu.zjut.domain.strategy.service.rule;
+package cn.edu.zjut.domain.strategy.service.rule.filter;
 
 import cn.edu.zjut.domain.strategy.model.entity.RuleActionEntity;
 import cn.edu.zjut.domain.strategy.model.entity.RuleMatterEntity;

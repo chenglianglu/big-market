@@ -1,6 +1,6 @@
 package cn.edu.zjut.domain.strategy.model.vo;
 
-import cn.edu.zjut.domain.strategy.service.rule.factory.DefaultLogicFactory;
+import cn.edu.zjut.domain.strategy.service.rule.filter.factory.DefaultLogicFactory;
 import cn.edu.zjut.types.common.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

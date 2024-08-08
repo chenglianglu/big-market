@@ -1,8 +1,8 @@
-package cn.edu.zjut.domain.strategy.service.rule.factory;
+package cn.edu.zjut.domain.strategy.service.rule.filter.factory;
 
 import cn.edu.zjut.domain.strategy.model.entity.RuleActionEntity;
 import cn.edu.zjut.domain.strategy.service.annotation.LogicStrategy;
-import cn.edu.zjut.domain.strategy.service.rule.ILogicFilter;
+import cn.edu.zjut.domain.strategy.service.rule.filter.ILogicFilter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,15 +1,13 @@
-package cn.edu.zjut.domain.strategy.service.rule.impl;
+package cn.edu.zjut.domain.strategy.service.rule.filter.impl;
 
 import cn.edu.zjut.domain.strategy.model.entity.RuleActionEntity;
 import cn.edu.zjut.domain.strategy.model.entity.RuleMatterEntity;
 import cn.edu.zjut.domain.strategy.model.vo.RuleLogicCheckTypeVO;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
 import cn.edu.zjut.domain.strategy.service.annotation.LogicStrategy;
-import cn.edu.zjut.domain.strategy.service.rule.ILogicFilter;
-import cn.edu.zjut.domain.strategy.service.rule.factory.DefaultLogicFactory;
+import cn.edu.zjut.domain.strategy.service.rule.filter.ILogicFilter;
+import cn.edu.zjut.domain.strategy.service.rule.filter.factory.DefaultLogicFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

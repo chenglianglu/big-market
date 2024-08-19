@@ -3,14 +3,10 @@ package cn.edu.zjut.infrastructure.persistent.repository;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
-import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardRuleModelVO;
+import cn.edu.zjut.domain.strategy.model.vo.*;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
-import cn.edu.zjut.infrastructure.persistent.dao.IStrategyAwardDao;
-import cn.edu.zjut.infrastructure.persistent.dao.IStrategyDao;
-import cn.edu.zjut.infrastructure.persistent.dao.IStrategyRuleDao;
-import cn.edu.zjut.infrastructure.persistent.po.StrategyAwardPO;
-import cn.edu.zjut.infrastructure.persistent.po.StrategyPO;
-import cn.edu.zjut.infrastructure.persistent.po.StrategyRulePO;
+import cn.edu.zjut.infrastructure.persistent.dao.*;
+import cn.edu.zjut.infrastructure.persistent.po.*;
 import cn.edu.zjut.infrastructure.persistent.redis.RedissonService;
 import cn.edu.zjut.types.common.Constants;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +33,12 @@ public class StrategyRepository implements IStrategyRepository {
     private IStrategyAwardDao strategyAwardDao;
     @Autowired
     private RedissonService redissonService;
+    @Autowired
+    private IRuleTreeDao ruleTreeDao;
+    @Autowired
+    private IRuleTreeNodeDao ruleTreeNodeDao;
+    @Autowired
+    private IRuleTreeNodeLineDao ruleTreeNodeLineDao;
 
     @Override
     public List<StrategyAwardEntity> queryStrategyAwardList(Long strategyId) {
@@ -144,5 +146,57 @@ public class StrategyRepository implements IStrategyRepository {
         strategyAward.setAwardId(awardId);
         String ruleModels = strategyAwardDao.queryStrategyAwardRuleModels(strategyAward);
         return StrategyAwardRuleModelVO.builder().ruleModels(ruleModels).build();
+    }
+
+    @Override
+    public RuleTreeVO queryRuleTreeVOByTreeId(String treeId) {
+        // 优先从缓存获取
+        String chacheKey = Constants.RedisKey.RULE_TREE_VO_KEY + treeId;
+        RuleTreeVO ruleTreeVOCache = redissonService.getValue(chacheKey);
+        if (ruleTreeVOCache != null) {
+            return ruleTreeVOCache;
+        }
+
+
+        RuleTreePO ruleTree = ruleTreeDao.queryRuleTreeByTreeId(treeId);
+        List<RuleTreeNodePO> ruleTreeNodes = ruleTreeNodeDao.queryRuleTreeNodeListByTreeId(treeId);
+        List<RuleTreeNodeLinePO> ruleTreeNodeLines = ruleTreeNodeLineDao.queryRuleTreeNodeLineListByTreeId(treeId);
+
+        // 1. tree node line 转换map结构
+        Map<String, List<RuleTreeNodeLineVO>> ruleTreeNodeLineMap = new HashMap<>();
+        for (RuleTreeNodeLinePO ruleTreeNodeLine : ruleTreeNodeLines) {
+            RuleTreeNodeLineVO ruleTreeNodeLineVO = RuleTreeNodeLineVO.builder()
+                        .treeId(ruleTreeNodeLine.getTreeId())
+                        .ruleNodeFrom(ruleTreeNodeLine.getRuleNodeFrom())
+                        .ruleNodeTo(ruleTreeNodeLine.getRuleNodeTo())
+                        .ruleLimitType(RuleLimitTypeVO.valueOf(ruleTreeNodeLine.getRuleLimitType()))
+                        .ruleLimitValue(RuleLogicCheckTypeVO.valueOf(ruleTreeNodeLine.getRuleLimitValue()))
+                        .build();
+            List<RuleTreeNodeLineVO> ruleTreeNodeLineVOList = ruleTreeNodeLineMap.computeIfAbsent(ruleTreeNodeLineVO.getRuleNodeFrom(), k -> new ArrayList<>());
+            ruleTreeNodeLineVOList.add(ruleTreeNodeLineVO);
+        }
+        // 2. tree node 转换map结构
+        Map<String, RuleTreeNodeVO> ruleTreeNodeMap = new HashMap<>();
+        for (RuleTreeNodePO ruleTreeNode : ruleTreeNodes) {
+            RuleTreeNodeVO ruleTreeNodeVO = RuleTreeNodeVO.builder()
+                        .treeId(ruleTreeNode.getTreeId())
+                        .ruleKey(ruleTreeNode.getRuleKey())
+                        .ruleDesc(ruleTreeNode.getRuleDesc())
+                        .ruleValue(ruleTreeNode.getRuleValue())
+                        .treeNodeLineVOList(ruleTreeNodeLineMap.get(ruleTreeNode.getRuleKey()))
+                        .build();
+            ruleTreeNodeMap.put(ruleTreeNodeVO.getRuleKey(), ruleTreeNodeVO);
+        }
+        // 构建Rule Tree
+        RuleTreeVO ruleTreeVO = RuleTreeVO.builder()
+                .treeId(ruleTree.getTreeId())
+                .treeName(ruleTree.getTreeName())
+                .treeDesc(ruleTree.getTreeDesc())
+                .treeRootRuleNode(ruleTree.getTreeRootRuleKey())
+                .treeNodeMap(ruleTreeNodeMap)
+                .build();
+        redissonService.setValue(chacheKey, ruleTreeVO);
+
+        return ruleTreeVO;
     }
 }

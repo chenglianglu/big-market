@@ -1,5 +1,7 @@
 package cn.edu.zjut.domain.strategy.service.rule.chain;
 
+import cn.edu.zjut.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
+
 /**
  * @description: 责任链接口
  * @author: lcl
@@ -13,7 +15,7 @@ public interface ILogicChain extends ILogicChainArmory{
      * @param strategyId
      * @return awardId
      */
-    Integer logic(String userId, Long strategyId);
+    DefaultChainFactory.StrategyAwardVO logic(String userId, Long strategyId);
 
 
 }

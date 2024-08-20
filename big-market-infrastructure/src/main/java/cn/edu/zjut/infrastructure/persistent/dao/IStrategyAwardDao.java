@@ -18,4 +18,6 @@ public interface IStrategyAwardDao {
     List<StrategyAwardPO> queryStrategyAwardListByStrategyId(Long strategyId);
 
     String queryStrategyAwardRuleModels(StrategyAwardPO strategyAward);
+
+    void updateStrategyAwardStock(StrategyAwardPO strategyAward);
 }

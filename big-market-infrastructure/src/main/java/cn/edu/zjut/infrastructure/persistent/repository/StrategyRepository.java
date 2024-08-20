@@ -10,11 +10,14 @@ import cn.edu.zjut.infrastructure.persistent.po.*;
 import cn.edu.zjut.infrastructure.persistent.redis.RedissonService;
 import cn.edu.zjut.types.common.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 策略仓储实现
@@ -198,5 +201,51 @@ public class StrategyRepository implements IStrategyRepository {
         redissonService.setValue(chacheKey, ruleTreeVO);
 
         return ruleTreeVO;
+    }
+
+    @Override
+    public void cacheStrategyAwardStock(String cacheKey, Integer awardCount) {
+        if (redissonService.isExists(cacheKey)) return;
+        redissonService.setAtomicLong(cacheKey, awardCount);
+
+    }
+
+    @Override
+    public Boolean subtractionAwardStock(String cacheKey) {
+        long surplus = redissonService.decr(cacheKey);
+        if (surplus < 0) {
+            redissonService.setValue(cacheKey, 0);
+            return false;
+        }
+        String lockKey = cacheKey + Constants.UNDERLINE + surplus;
+        Boolean lock = redissonService.setNx(lockKey);
+        if(!lock){
+            log.info("策略奖品加锁失败{}", lockKey);
+        }
+        return lock;
+
+    }
+
+    @Override
+    public void awardStockConsumeSendQueue(StrategyAwardStockKeyVO strategyAwardStockKeyVO) {
+        String cacheKey = Constants.RedisKey.STRATEGY_AWARD_STOCK_QUEUE_KEY;
+        RBlockingQueue<StrategyAwardStockKeyVO> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<StrategyAwardStockKeyVO> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+        delayedQueue.offer(strategyAwardStockKeyVO, 3, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public StrategyAwardStockKeyVO takeQueueValue() {
+        String cacheKey = Constants.RedisKey.STRATEGY_AWARD_STOCK_QUEUE_KEY;
+        RBlockingQueue<StrategyAwardStockKeyVO> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        return blockingQueue.poll();
+    }
+
+    @Override
+    public void updateStrategyAwardStock(Long strategyId, Integer awardId) {
+        StrategyAwardPO strategyAward = new StrategyAwardPO();
+        strategyAward.setStrategyId(strategyId);
+        strategyAward.setAwardId(awardId);
+        strategyAwardDao.updateStrategyAwardStock(strategyAward);
     }
 }

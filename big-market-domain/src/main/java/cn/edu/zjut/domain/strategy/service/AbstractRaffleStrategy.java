@@ -2,13 +2,8 @@ package cn.edu.zjut.domain.strategy.service;
 
 import cn.edu.zjut.domain.strategy.model.entity.RaffleAwardEntity;
 import cn.edu.zjut.domain.strategy.model.entity.RaffleFactorEntity;
-import cn.edu.zjut.domain.strategy.model.entity.RuleActionEntity;
-import cn.edu.zjut.domain.strategy.model.vo.RuleLogicCheckTypeVO;
-import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardRuleModelVO;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
 import cn.edu.zjut.domain.strategy.service.armory.IStrategyDispatch;
-import cn.edu.zjut.domain.strategy.service.raffle.IRaffleStrategy;
-import cn.edu.zjut.domain.strategy.service.rule.chain.ILogicChain;
 import cn.edu.zjut.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import cn.edu.zjut.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import cn.edu.zjut.types.enums.ResponseCode;
@@ -23,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  * @date: 2024/8/5 15:51
  */
 @Slf4j
-public abstract class AbstractRaffleStrategy implements IRaffleStrategy {
+public abstract class AbstractRaffleStrategy implements IRaffleStrategy, IRaffleStock {
     // 策略仓储服务
     protected IStrategyRepository strategyRepository;
     // 策略调度服务

@@ -5,6 +5,7 @@ import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
 import cn.edu.zjut.domain.strategy.model.vo.RuleTreeVO;
 import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardRuleModelVO;
+import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardStockKeyVO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,4 +38,14 @@ public interface IStrategyRepository {
     StrategyAwardRuleModelVO queryStrategyAwardRuleModel(Long strategyId, Integer awardId);
 
     RuleTreeVO queryRuleTreeVOByTreeId(String treeId);
+
+    void cacheStrategyAwardStock(String cacheKey, Integer awardCount);
+
+    Boolean subtractionAwardStock(String cacheKey);
+
+    void awardStockConsumeSendQueue(StrategyAwardStockKeyVO strategyAwardStockKeyVO);
+
+    StrategyAwardStockKeyVO takeQueueValue();
+
+    void updateStrategyAwardStock(Long strategyId, Integer awardId);
 }

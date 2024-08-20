@@ -4,6 +4,7 @@ import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyEntity;
 import cn.edu.zjut.domain.strategy.model.entity.StrategyRuleEntity;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
+import cn.edu.zjut.types.common.Constants;
 import cn.edu.zjut.types.enums.ResponseCode;
 import cn.edu.zjut.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +33,16 @@ public class StrategyArmoryDispatch implements IStrategyArmory, IStrategyDispatc
     public boolean assembleLotteryStrategy(Long strategyId) {
         // 1.查询策略奖励列表
         List<StrategyAwardEntity> strategyAwardEntities = strategyRepository.queryStrategyAwardList(strategyId);
+        // 2. 缓存奖品库存 用于decr扣减使用
+        for (StrategyAwardEntity strategyAward : strategyAwardEntities) {
+            Integer awardId = strategyAward.getAwardId();
+            Integer awardCount = strategyAward.getAwardCount();
+            cacheStrategyAwardStock(strategyId, awardId, awardCount);
+        }
+        // 3.1 默认装配配置[全量配置]
         assembleLotteryStrategy(String.valueOf(strategyId), strategyAwardEntities);
 
-        // 2.权重规则配置 - 适用于rule_weight 权重规则配置
+        // 3.2.权重规则配置 - 适用于rule_weight 权重规则配置
         StrategyEntity strategyEntity = strategyRepository.queryStrategyEntityByStrategyId(strategyId);
         String ruleWeight = strategyEntity.getRuleWeight();
         if (null == ruleWeight) {
@@ -54,6 +62,12 @@ public class StrategyArmoryDispatch implements IStrategyArmory, IStrategyDispatc
         }
 
         return true;
+    }
+
+    private void cacheStrategyAwardStock(Long strategyId, Integer awardId, Integer awardCount) {
+        String cacheKey = Constants.RedisKey.STRATEGY_AWARD_STOCK_KEY + strategyId + Constants.UNDERLINE + awardId;
+        strategyRepository.cacheStrategyAwardStock(cacheKey, awardCount);
+
     }
 
     private void assembleLotteryStrategy(String key,  List<StrategyAwardEntity> strategyAwardEntities) {
@@ -103,5 +117,11 @@ public class StrategyArmoryDispatch implements IStrategyArmory, IStrategyDispatc
         String key = String.valueOf(strategyId).concat("_").concat(ruleWeightValue);
         int rateRange = strategyRepository.getRateRange(key);
         return strategyRepository.getStrategyAwardAssemble(key, new SecureRandom().nextInt(rateRange));
+    }
+
+    @Override
+    public Boolean subtractionAwardStock(Long strategyId, Integer awardId) {
+        String cacheKey = Constants.RedisKey.STRATEGY_AWARD_STOCK_KEY + strategyId + Constants.UNDERLINE + awardId;
+        return strategyRepository.subtractionAwardStock(cacheKey);
     }
 }

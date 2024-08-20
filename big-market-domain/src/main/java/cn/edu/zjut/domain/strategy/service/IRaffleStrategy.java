@@ -1,4 +1,4 @@
-package cn.edu.zjut.domain.strategy.service.raffle;
+package cn.edu.zjut.domain.strategy.service;
 
 import cn.edu.zjut.domain.strategy.model.entity.RaffleAwardEntity;
 import cn.edu.zjut.domain.strategy.model.entity.RaffleFactorEntity;

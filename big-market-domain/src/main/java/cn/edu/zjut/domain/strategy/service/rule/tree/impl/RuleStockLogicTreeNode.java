@@ -47,6 +47,7 @@ public class RuleStockLogicTreeNode implements ILogicTreeNode {
                             .build())
                     .build();
         }
+        log.info("规则过滤-库存失败 userId: {}, strategyId: {}, awardId: {}", userId, strategyId, awardId);
         return DefaultTreeFactory.TreeActionEntity.builder()
                 .ruleLogicCheckType(RuleLogicCheckTypeVO.ALLOW)
                 .build();

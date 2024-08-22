@@ -1,10 +1,13 @@
 package cn.edu.zjut.domain.strategy.service.raffle;
 
+import cn.edu.zjut.domain.strategy.model.entity.StrategyAwardEntity;
 import cn.edu.zjut.domain.strategy.model.vo.RuleTreeVO;
 import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardRuleModelVO;
 import cn.edu.zjut.domain.strategy.model.vo.StrategyAwardStockKeyVO;
 import cn.edu.zjut.domain.strategy.repository.IStrategyRepository;
 import cn.edu.zjut.domain.strategy.service.AbstractRaffleStrategy;
+import cn.edu.zjut.domain.strategy.service.IRaffleAward;
+import cn.edu.zjut.domain.strategy.service.IRaffleStock;
 import cn.edu.zjut.domain.strategy.service.armory.IStrategyDispatch;
 import cn.edu.zjut.domain.strategy.service.rule.chain.ILogicChain;
 import cn.edu.zjut.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
@@ -12,6 +15,9 @@ import cn.edu.zjut.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import cn.edu.zjut.domain.strategy.service.rule.tree.factory.engine.IDecisionTreeEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @description: 默认抽奖策略
@@ -21,7 +27,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
+public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRaffleAward, IRaffleStock {
 
     public DefaultRaffleStrategy(IStrategyRepository strategyRepository, IStrategyDispatch strategyDispatch, DefaultChainFactory defaultChainFactory, DefaultTreeFactory defaultTreeFactory) {
         super(strategyRepository, strategyDispatch, defaultChainFactory, defaultTreeFactory);
@@ -56,5 +62,10 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
     @Override
     public void updateStrategyAwardStock(Long strategyId, Integer awardId) {
         strategyRepository.updateStrategyAwardStock(strategyId, awardId);
+    }
+
+    @Override
+    public List<StrategyAwardEntity> queryRaffleStrategyAwardList(Long strategyId) {
+        return strategyRepository.queryStrategyAwardList(strategyId);
     }
 }
